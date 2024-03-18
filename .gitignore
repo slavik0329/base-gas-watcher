@@ -20,3 +20,4 @@ node_modules
 /app/typechain-types
 
 out/
+.DS_Store
