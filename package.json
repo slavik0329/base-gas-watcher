@@ -1,0 +1,17 @@
+{
+  "name": "example-menubar-hello-world",
+  "version": "0.1.0",
+  "description": "Example menubar electron app",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^27.3.6",
+    "menubar": "^9.4.0"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^3.2.9"
+  }
+}
