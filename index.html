@@ -1,8 +1,26 @@
 <html>
-  <head>
-    <title>Example App</title>
-  </head>
-  <body>
-    Hello World.
-  </body>
+<head>
+  <title>Example App</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+    }
+
+    .exit-button {
+      cursor: pointer;
+      font-family: Helvetica;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .exit-button:hover {
+      background-color: #000;
+      color: #FFF;
+    }
+  </style>
+</head>
+<body>
+<div class="exit-button" onclick="electron.exitApp();">Close Widget</div>
+</body>
 </html>
