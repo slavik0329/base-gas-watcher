@@ -1,6 +1,6 @@
 {
-  "name": "Base Gas Watcher",
-  "version": "0.1.0",
+  "name": "base-gas-watcher",
+  "version": "0.1.2",
   "description": "Example menubar electron app",
   "main": "main.js",
   "private": true,

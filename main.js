@@ -9,7 +9,7 @@ ipcMain.on("exit-app", () => {
 });
 
 const mb = menubar({
-  icon: path.join(__dirname, "icon.png"),
+  icon: path.join(__dirname, "menuicon.png"),
   browserWindow: {
     webPreferences: {
       preload: path.join(__dirname, "preload.js")
@@ -58,9 +58,10 @@ function getBaseFee() {
         const baseFeePerGasWei = parseInt(response.result.baseFeePerGas, 16);
 
         // Convert Wei to Gwei for readability
-        const baseFeePerGasGwei = baseFeePerGasWei / 1e9;
-        console.log("Base Fee Per Gas:", baseFeePerGasGwei, "Gwei");
-        mb.tray.setTitle(` ${baseFeePerGasGwei.toPrecision(4)} Gwei`);
+        const baseFeePerGasMwei = baseFeePerGasWei / 1e6;
+        // const baseFeePerGasGwei = baseFeePerGasWei / 1e9;
+        console.log("Base Fee Per Gas:", baseFeePerGasMwei, "Mwei");
+        mb.tray.setTitle(` ${Math.round(baseFeePerGasMwei)} Mwei`);
       } catch (error) {
         console.error("Error parsing response:", error);
       }
