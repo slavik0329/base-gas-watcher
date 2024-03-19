@@ -8,10 +8,6 @@ ipcMain.on("exit-app", () => {
   app.quit();
 });
 
-console.log({
-  message: JSON.stringify(fs.readdirSync(path.join(__dirname)))
-});
-
 const mb = menubar({
   icon: path.join(__dirname, "icon.png"),
   browserWindow: {
