@@ -1,5 +1,5 @@
-# Base Gas Watcher
+# Base Gas Watcher for OSX Tray
 
-Runing in development mode:
+Running in development mode:
 
 ```electron main.js```
