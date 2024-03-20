@@ -1,7 +1,8 @@
 import { menubar } from "menubar";
 import path from "path";
-import { app, ipcMain } from "electron";
+import { app, ipcMain, BrowserWindow } from "electron";
 import https from "https";
+import fs from "fs";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -10,11 +11,10 @@ ipcMain.on("exit-app", () => {
   app.quit();
 });
 
-console.log("dirname", __dirname);
-console.log("MAIN_WINDOW_WEBPACK_ENTRY", MAIN_WINDOW_WEBPACK_ENTRY);
+const appPath = app.getAppPath();
 
 const mb = menubar({
-  icon: path.join(__dirname, "../../menuicon.png"),
+  icon: path.join(appPath, ".webpack/renderer/assets/menuicon@2x.png"),
   index: MAIN_WINDOW_WEBPACK_ENTRY,
   browserWindow: {
     webPreferences: {
