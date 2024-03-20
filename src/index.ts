@@ -1,18 +1,24 @@
-const { menubar } = require("menubar");
-const https = require("https");
-const { app, Menu, Tray, ipcMain } = require("electron");
-const path = require("path");
-const fs = require("fs");
+import { menubar } from "menubar";
+import path from "path";
+import { app, ipcMain } from "electron";
+import https from "https";
+
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 ipcMain.on("exit-app", () => {
   app.quit();
 });
 
+console.log("dirname", __dirname);
+console.log("MAIN_WINDOW_WEBPACK_ENTRY", MAIN_WINDOW_WEBPACK_ENTRY);
+
 const mb = menubar({
-  icon: path.join(__dirname, "menuicon.png"),
+  icon: path.join(__dirname, "../../menuicon.png"),
+  index: MAIN_WINDOW_WEBPACK_ENTRY,
   browserWindow: {
     webPreferences: {
-      preload: path.join(__dirname, "preload.js")
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
     },
     width: 128,
     height: 34,
