@@ -2,14 +2,10 @@ import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import styled from "styled-components";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
-  ResponsiveContainer,
-  Legend,
   AreaChart,
   Area
 } from "recharts";
@@ -56,26 +52,38 @@ const ChartTitle = styled.div`
   color: #666;
 `;
 
+const Loading = styled.div`
+  font-family: Helvetica;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  margin-bottom: 220px;
+`;
+
 const App = () => {
   const [data, setData] = React.useState<HistoricalDataPoint[]>([]);
+  const [loading, setLoading] = React.useState(false);
 
   // @ts-ignore
   const handleExit = () => window.electron.exitApp();
 
+  async function getHistory() {
+    console.log("Getting history");
+
+    setLoading(true);
+    //@ts-ignore
+    const history = await window.electron.getHistory();
+
+    // const history = mockHistoricalData;
+    setData(history);
+
+    setLoading(false);
+  }
+
   useEffect(() => {
-    async function getHistory() {
-      console.log("Getting history");
-
-      // @ts-ignore
-      // const history = await window.electron.getHistory();
-
-      const history = mockHistoricalData;
-
-      setData(history);
-    }
-
     getHistory();
-    // const formattedData = h
   }, []);
 
   const timestamps = data.map(item => item.timestamp);
@@ -118,8 +126,16 @@ const App = () => {
 
   return (
     <div>
-      <ChartTitle>Base Fee History</ChartTitle>
-      <ChartContainer>{renderLineChart}</ChartContainer>
+      {!loading ? (
+        <>
+          <ChartTitle>Base Fee History</ChartTitle>
+          <ChartContainer>{renderLineChart}</ChartContainer>
+        </>
+      ) : (
+        <Centered>
+          <Loading>Loading History...</Loading>
+        </Centered>
+      )}
       <Centered>
         <ExitButton onClick={handleExit}>Exit App</ExitButton>
       </Centered>
