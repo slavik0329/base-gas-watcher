@@ -3,6 +3,7 @@ import path from "path";
 import { app, ipcMain, BrowserWindow } from "electron";
 import https from "https";
 import fs from "fs";
+import axios from "axios";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -26,64 +27,50 @@ const mb = menubar({
   }
 });
 
-function getBaseFee() {
-  // Replace with your Geth node RPC URL
+async function getBaseFee(blockNumber?: number) {
   const nodeUrl = "https://mainnet.base.org";
 
-  // Prepare the JSON-RPC request payload to get the latest block
-  const data = JSON.stringify({
-    jsonrpc: "2.0",
-    method: "eth_getBlockByNumber",
-    params: ["latest", false], // false indicates that we do not need detailed transaction info
-    id: 1
-  });
-
-  const options = {
-    hostname: new URL(nodeUrl).hostname,
-    port: new URL(nodeUrl).port,
-    path: new URL(nodeUrl).pathname,
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Content-Length": data.length
-    }
-  };
-
-  const req = https.request(options, res => {
-    let responseBody = "";
-
-    res.on("data", chunk => {
-      responseBody += chunk;
-    });
-
-    res.on("end", () => {
-      try {
-        const response = JSON.parse(responseBody);
-
-        // Extract the base fee per gas from the latest block and convert from hex to Wei
-        const baseFeePerGasWei = parseInt(response.result.baseFeePerGas, 16);
-
-        // Convert Wei to Gwei for readability
-        const baseFeePerGasMwei = baseFeePerGasWei / 1e6;
-        // const baseFeePerGasGwei = baseFeePerGasWei / 1e9;
-        console.log("Base Fee Per Gas:", baseFeePerGasMwei, "Mwei");
-        mb.tray.setTitle(` ${Math.round(baseFeePerGasMwei)} Mwei`);
-      } catch (error) {
-        console.error("Error parsing response:", error);
+  try {
+    const response = await axios.post(
+      nodeUrl,
+      {
+        jsonrpc: "2.0",
+        method: "eth_getBlockByNumber",
+        params: [blockNumber ?? "latest", false], // false indicates that we do not need detailed transaction info
+        id: 1
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
-    });
-  });
+    );
 
-  req.on("error", error => {
-    console.error("Error making request:", error);
-  });
+    // Extract the base fee per gas from the latest block and convert from hex to Wei
+    const baseFeePerGasWei = parseInt(response.data.result.baseFeePerGas, 16);
 
-  req.write(data);
-  req.end();
+    // Convert Wei to Mwei for readability
+    const baseFeePerGasMwei = baseFeePerGasWei / 1e6;
+
+    console.log("Base Fee Per Gas:", baseFeePerGasMwei, "Mwei");
+    return Math.round(baseFeePerGasMwei); // Return the rounded base fee per gas in Mwei
+  } catch (error) {
+    console.error("Error making request or parsing response:", error);
+    return null; // Return null or a suitable default/error value in case of an error
+  }
+}
+
+async function refreshFee() {
+  const baseFee = await getBaseFee();
+  if (baseFee) {
+    mb.tray.setTitle(`${baseFee} Mwei`);
+  }
 }
 
 mb.on("ready", () => {
   console.log("Menubar app is ready.");
-  getBaseFee();
-  setInterval(getBaseFee, 10000);
+  refreshFee();
+  setInterval(async () => {
+    await refreshFee();
+  }, 10000);
 });
