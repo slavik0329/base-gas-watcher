@@ -27,6 +27,5 @@ export const rules: Required<ModuleOptions>['rules'] = [
         transpileOnly: true,
       },
     },
-
-  }
+  },
 ];
