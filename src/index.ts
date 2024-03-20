@@ -1,12 +1,12 @@
 import { menubar } from "menubar";
 import path from "path";
-import { app, ipcMain, BrowserWindow } from "electron";
-import https from "https";
-import fs from "fs";
+import { app, ipcMain } from "electron";
 import axios from "axios";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+
+const nodeUrl = "https://mainnet.base.org";
 
 ipcMain.on("exit-app", () => {
   app.quit();
@@ -21,15 +21,13 @@ const mb = menubar({
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
     },
-    width: 128,
-    height: 34,
+    width: 400,
+    height: 300,
     roundedCorners: false
   }
 });
 
 async function getBaseFee(blockNumber?: number) {
-  const nodeUrl = "https://mainnet.base.org";
-
   try {
     const response = await axios.post(
       nodeUrl,
@@ -60,6 +58,71 @@ async function getBaseFee(blockNumber?: number) {
   }
 }
 
+async function getHistoricalGasPrices() {
+  const blocksPerPeriod = 1200; // Approximate number of blocks to skip for 20 data points over 48 hours
+
+  let historicalData = [];
+
+  try {
+    // Get the current block number
+    const currentBlockResponse = await axios.post(
+      nodeUrl,
+      {
+        jsonrpc: "2.0",
+        method: "eth_blockNumber",
+        params: [],
+        id: 1
+      },
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    let currentBlockNumber = parseInt(currentBlockResponse.data.result, 16);
+    const startBlock = currentBlockNumber - 34400;
+
+    // Loop to collect data points
+    for (let i = 0; i < 200; i++) {
+      const blockNumberHex = "0x" + currentBlockNumber.toString(16);
+      const response = await axios.post(
+        nodeUrl,
+        {
+          jsonrpc: "2.0",
+          method: "eth_getBlockByNumber",
+          params: [blockNumberHex, false], // false for transaction details not required
+          id: 1
+        },
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      const baseFeePerGasWei = parseInt(response.data.result.baseFeePerGas, 16);
+      const baseFeePerGasMwei = baseFeePerGasWei / 1e6;
+      const timestamp = parseInt(response.data.result.timestamp, 16);
+
+      historicalData.push({
+        blockNumber: currentBlockNumber,
+        baseFeePerGasMwei: Math.round(baseFeePerGasMwei),
+        timestamp
+      });
+
+      // Move to the next block to sample
+      currentBlockNumber -= blocksPerPeriod;
+      if (currentBlockNumber < startBlock) break; // Safety check to avoid going before the start block
+    }
+
+    return historicalData; // Return the collected historical data with timestamps
+  } catch (error) {
+    console.error("Error retrieving historical gas prices:", error);
+    return []; // Return an empty array or suitable error value
+  }
+}
+
 async function refreshFee() {
   const baseFee = await getBaseFee();
   if (baseFee) {
@@ -67,10 +130,21 @@ async function refreshFee() {
   }
 }
 
-mb.on("ready", () => {
+mb.on("ready", async () => {
   console.log("Menubar app is ready.");
   refreshFee();
   setInterval(async () => {
     await refreshFee();
   }, 10000);
+});
+
+app.whenReady().then(() => {
+  ipcMain.handle("getHistory", async () => {
+    console.log("Received getHistory request from renderer process");
+
+    const historicalGasPrices = await getHistoricalGasPrices();
+    console.log("Historical Gas Prices:", historicalGasPrices);
+
+    return historicalGasPrices;
+  });
 });
