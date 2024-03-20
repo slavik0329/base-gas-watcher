@@ -25,10 +25,11 @@ const ChartContainer = styled.div`
 const Centered = styled.div`
   display: flex;
   justify-content: center;
+  gap: 8px;
   align-items: center;
 `;
 
-const ExitButton = styled.div`
+const Button = styled.div`
   display: inline-block;
   cursor: pointer;
   font-family: Helvetica;
@@ -137,7 +138,8 @@ const App = () => {
         </Centered>
       )}
       <Centered>
-        <ExitButton onClick={handleExit}>Exit App</ExitButton>
+        <Button onClick={getHistory}>Refresh</Button>
+        <Button onClick={handleExit}>Exit App</Button>
       </Centered>
     </div>
   );
