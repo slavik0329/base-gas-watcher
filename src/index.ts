@@ -1,8 +1,6 @@
 import { menubar } from "menubar";
 import path from "path";
-import { app, ipcMain, BrowserWindow } from "electron";
-import https from "https";
-import fs from "fs";
+import { app, ipcMain } from "electron";
 import axios from "axios";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -23,8 +21,8 @@ const mb = menubar({
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
     },
-    width: 128,
-    height: 34,
+    width: 400,
+    height: 300,
     roundedCorners: false
   }
 });
@@ -117,7 +115,6 @@ async function getHistoricalGasPrices() {
       if (currentBlockNumber < startBlock) break; // Safety check to avoid going before the start block
     }
 
-    console.log("Historical Gas Prices with Timestamps:", historicalData);
     return historicalData; // Return the collected historical data with timestamps
   } catch (error) {
     console.error("Error retrieving historical gas prices:", error);
@@ -138,7 +135,15 @@ mb.on("ready", async () => {
   setInterval(async () => {
     await refreshFee();
   }, 10000);
+});
 
-  const historicalGasPrices = await getHistoricalGasPrices();
-  console.log("Historical Gas Prices:", historicalGasPrices);
+app.whenReady().then(() => {
+  ipcMain.handle("getHistory", async () => {
+    console.log("Received getHistory request from renderer process");
+
+    const historicalGasPrices = await getHistoricalGasPrices();
+    console.log("Historical Gas Prices:", historicalGasPrices);
+
+    return historicalGasPrices;
+  });
 });

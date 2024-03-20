@@ -2,5 +2,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electron", {
-  exitApp: () => ipcRenderer.send("exit-app")
+  exitApp: () => ipcRenderer.send("exit-app"),
+  getHistory: () => ipcRenderer.invoke("getHistory")
 });
