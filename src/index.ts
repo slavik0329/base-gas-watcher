@@ -59,7 +59,8 @@ async function getBaseFee(blockNumber?: number) {
 }
 
 async function getHistoricalGasPrices() {
-  const blocksPerPeriod = 630; // Approximate number of blocks to skip for 20 data points over 48 hours
+  const blocksPerPeriod = 1200; // Approximate number of blocks to skip for 20 data points over 48 hours
+
   let historicalData = [];
 
   try {
@@ -80,10 +81,10 @@ async function getHistoricalGasPrices() {
     );
 
     let currentBlockNumber = parseInt(currentBlockResponse.data.result, 16);
-    const startBlock = currentBlockNumber - 6630; // Approximate start block for 48 hours ago
+    const startBlock = currentBlockNumber - 34400;
 
     // Loop to collect data points
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 200; i++) {
       const blockNumberHex = "0x" + currentBlockNumber.toString(16);
       const response = await axios.post(
         nodeUrl,
