@@ -5,21 +5,27 @@ import { chains } from "./chains";
 
 export let nodeUrl = store.get("rpcUrl");
 
+async function getBlock(blockNumberHex: string) {
+  return await axios.post(
+    nodeUrl,
+    {
+      jsonrpc: "2.0",
+      method: "eth_getBlockByNumber",
+      params: [blockNumberHex, false], // false for transaction details not required
+      id: 1
+    },
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
+}
+
 export async function getBaseFee(blockNumber?: number) {
   try {
-    const response = await axios.post(
-      nodeUrl,
-      {
-        jsonrpc: "2.0",
-        method: "eth_getBlockByNumber",
-        params: [blockNumber ?? "latest", false], // false indicates that we do not need detailed transaction info
-        id: 1
-      },
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
+    const response = await getBlock(
+      blockNumber ? "0x" + blockNumber.toString(16) : "latest"
     );
 
     // Extract the base fee per gas from the latest block and convert from hex to Wei
@@ -64,20 +70,7 @@ export async function getHistoricalGasPrices(): Promise<HistoricalDataPoint[]> {
     // Loop to collect data points
     for (let i = 0; i < 200; i++) {
       const blockNumberHex = "0x" + currentBlockNumber.toString(16);
-      const response = await axios.post(
-        nodeUrl,
-        {
-          jsonrpc: "2.0",
-          method: "eth_getBlockByNumber",
-          params: [blockNumberHex, false], // false for transaction details not required
-          id: 1
-        },
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      const response = await getBlock(blockNumberHex);
 
       const baseFeePerGasWei = parseInt(response.data.result.baseFeePerGas, 16);
       const baseFeePerGasMwei = baseFeePerGasWei / 1e6;
