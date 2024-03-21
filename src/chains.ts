@@ -4,11 +4,16 @@ export const chains: Chain[] = [
   {
     name: "Base",
     rpcUrl: "https://mainnet.base.org",
-    icon: "base.png"
+    icon: "base@2x.png"
   },
   {
     name: "Optimism",
     rpcUrl: "https://optimism.blockpi.network/v1/rpc/public",
-    icon: "optimism.png"
+    icon: "optimism@2x.png"
+  },
+  {
+    name: "Mainnet",
+    rpcUrl: "https://eth.llamarpc.com",
+    icon: "mainnet@2x.png"
   }
 ];

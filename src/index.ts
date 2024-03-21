@@ -177,6 +177,8 @@ app.whenReady().then(() => {
       path.join(appPath, `.webpack/renderer/assets/${chain.icon}`)
     );
 
+    mb.tray.setTitle("...");
+
     nodeUrl = chain.rpcUrl;
     refreshFee();
   });
