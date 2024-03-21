@@ -10,18 +10,19 @@ import {
   Area
 } from "recharts";
 import dayjs from "dayjs";
-import { Chain, HistoricalDataPoint } from "./types";
+import { HistoricalDataPoint } from "./types";
 import { mockHistoricalData } from "./testPrices";
 import { useStore } from "./useStore";
 import { chains } from "./chains";
+import { IoMdExit, IoMdRefresh, IoMdSettings } from "react-icons/io";
+import IconButton from "./components/IconButton";
 
 const ChartContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
   padding: 20px;
-  margin-top: -30px;
+  margin: -30px auto 0;
 `;
 
 const Centered = styled.div`
@@ -29,20 +30,6 @@ const Centered = styled.div`
   justify-content: center;
   gap: 8px;
   align-items: center;
-`;
-
-const Button = styled.div`
-  display: inline-block;
-  cursor: pointer;
-  font-family: Helvetica;
-  padding: 8px;
-  text-align: center;
-  color: #666;
-  margin-top: -12px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  &:hover {
-  background-color: #ccc;
 `;
 
 const ChartTitle = styled.div`
@@ -150,22 +137,15 @@ const App = () => {
         </Centered>
       )}
       <Centered>
-        <Button onClick={getHistory}>Refresh</Button>
-        <Button
-          onClick={() => {
-            setChainId(1);
-          }}
-        >
-          setChainTo1
-        </Button>
-        <Button
-          onClick={() => {
-            setChainId(0);
-          }}
-        >
-          setChainTo0
-        </Button>
-        <Button onClick={handleExit}>Exit App</Button>
+        <IconButton onClick={getHistory} title={"Refresh"}>
+          <IoMdRefresh />
+        </IconButton>
+        <IconButton title={"Settings"}>
+          <IoMdSettings />
+        </IconButton>
+        <IconButton onClick={handleExit} title={"Quit Widget"}>
+          <IoMdExit />
+        </IconButton>
       </Centered>
     </div>
   );

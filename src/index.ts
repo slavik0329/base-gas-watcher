@@ -38,6 +38,7 @@ const mb = menubar({
   browserWindow: {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
+      // devTools: true
     },
     width: 400,
     height: 300,
