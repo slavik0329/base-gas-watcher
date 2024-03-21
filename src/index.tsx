@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import styled from "styled-components";
 import { HistoricalDataPoint } from "./types";
-import { mockHistoricalData } from "./testPrices";
+// import { mockHistoricalData } from "./testPrices";
 import { IoMdExit, IoMdRefresh, IoMdSettings } from "react-icons/io";
 import IconButton from "./components/IconButton";
 import { BaseGasChart } from "./components/BaseGasChart";
