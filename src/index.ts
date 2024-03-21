@@ -3,6 +3,7 @@ import path from "path";
 import { app, ipcMain } from "electron";
 import axios from "axios";
 import Store from "electron-store";
+import { Chain } from "./types";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -19,8 +20,7 @@ const store = new Store<StoreType>({
   }
 });
 
-// const nodeUrl = "https://mainnet.base.org";
-const nodeUrl = store.get("rpcUrl");
+let nodeUrl = store.get("rpcUrl");
 
 ipcMain.on("exit-app", () => {
   app.quit();
@@ -166,15 +166,17 @@ app.whenReady().then(() => {
     return historicalGasPrices;
   });
 
-  ipcMain.handle("setChain", async (event, chain: string) => {
-    // console.log("Received setChain request from renderer process");
-    //
-
+  ipcMain.on("setChain", async (event, chain: Chain) => {
     console.log("set chain to", chain);
 
-    //
-    // store.set("rpcUrl", chain);
-    //
-    // return true;
+    store.set("chainIcon", chain.icon);
+    store.set("rpcUrl", chain.rpcUrl);
+
+    mb.tray.setImage(
+      path.join(appPath, `.webpack/renderer/assets/${chain.icon}`)
+    );
+
+    nodeUrl = chain.rpcUrl;
+    refreshFee();
   });
 });

@@ -8,7 +8,7 @@ export const chains: Chain[] = [
   },
   {
     name: "Optimism",
-    rpcUrl: "https://mainnet.base.org",
+    rpcUrl: "https://optimism.blockpi.network/v1/rpc/public",
     icon: "optimism.png"
   }
 ];

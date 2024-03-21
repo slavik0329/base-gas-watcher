@@ -10,9 +10,10 @@ import {
   Area
 } from "recharts";
 import dayjs from "dayjs";
-import { HistoricalDataPoint } from "./types";
+import { Chain, HistoricalDataPoint } from "./types";
 import { mockHistoricalData } from "./testPrices";
 import { useStore } from "./useStore";
+import { chains } from "./chains";
 
 const ChartContainer = styled.div`
   display: flex;
@@ -78,9 +79,9 @@ const App = () => {
 
     setLoading(true);
     //@ts-ignore
-    const history = await window.electron.getHistory();
+    // const history = await window.electron.getHistory();
 
-    // const history = mockHistoricalData;
+    const history = mockHistoricalData;
     setData(history);
 
     setLoading(false);
@@ -128,6 +129,14 @@ const App = () => {
     </AreaChart>
   );
 
+  function setChainId(id: number) {
+    const chain = chains[id];
+
+    //@ts-ignore
+    window.electron.setChain(chain);
+    setSelectedChainId(id);
+  }
+
   return (
     <div>
       {!loading ? (
@@ -144,16 +153,14 @@ const App = () => {
         <Button onClick={getHistory}>Refresh</Button>
         <Button
           onClick={() => {
-            //@ts-ignore
-            // await window.electron.setChain(1);
-            setSelectedChainId(1);
+            setChainId(1);
           }}
         >
           setChainTo1
         </Button>
         <Button
           onClick={() => {
-            setSelectedChainId(0);
+            setChainId(0);
           }}
         >
           setChainTo0
