@@ -3,3 +3,9 @@ export type HistoricalDataPoint = {
   baseFeePerGasMwei: number;
   timestamp: number;
 };
+
+export type Chain = {
+  name: string;
+  rpcUrl: string;
+  icon: string;
+};

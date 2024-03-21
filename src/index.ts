@@ -2,11 +2,25 @@ import { menubar } from "menubar";
 import path from "path";
 import { app, ipcMain } from "electron";
 import axios from "axios";
+import Store from "electron-store";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-const nodeUrl = "https://mainnet.base.org";
+type StoreType = {
+  rpcUrl: string;
+  chainIcon: string;
+};
+
+const store = new Store<StoreType>({
+  defaults: {
+    chainIcon: "base@2x.png",
+    rpcUrl: "https://mainnet.base.org"
+  }
+});
+
+// const nodeUrl = "https://mainnet.base.org";
+const nodeUrl = store.get("rpcUrl");
 
 ipcMain.on("exit-app", () => {
   app.quit();
@@ -15,7 +29,11 @@ ipcMain.on("exit-app", () => {
 const appPath = app.getAppPath();
 
 const mb = menubar({
-  icon: path.join(appPath, ".webpack/renderer/assets/menuicon@2x.png"),
+  // icon: path.join(appPath, `.webpack/renderer/assets/base@2x.png`),
+  icon: path.join(
+    appPath,
+    `.webpack/renderer/assets/${store.get("chainIcon")}`
+  ),
   index: MAIN_WINDOW_WEBPACK_ENTRY,
   browserWindow: {
     webPreferences: {
@@ -146,5 +164,17 @@ app.whenReady().then(() => {
     console.log("Historical Gas Prices:", historicalGasPrices);
 
     return historicalGasPrices;
+  });
+
+  ipcMain.handle("setChain", async (event, chain: string) => {
+    // console.log("Received setChain request from renderer process");
+    //
+
+    console.log("set chain to", chain);
+
+    //
+    // store.set("rpcUrl", chain);
+    //
+    // return true;
   });
 });

@@ -12,6 +12,7 @@ import {
 import dayjs from "dayjs";
 import { HistoricalDataPoint } from "./types";
 import { mockHistoricalData } from "./testPrices";
+import { useStore } from "./useStore";
 
 const ChartContainer = styled.div`
   display: flex;
@@ -66,6 +67,8 @@ const Loading = styled.div`
 const App = () => {
   const [data, setData] = React.useState<HistoricalDataPoint[]>([]);
   const [loading, setLoading] = React.useState(false);
+  const selectedChainId = useStore(state => state.selectedChainId);
+  const setSelectedChainId = useStore(state => state.setSelectedChainId);
 
   // @ts-ignore
   const handleExit = () => window.electron.exitApp();
@@ -139,6 +142,22 @@ const App = () => {
       )}
       <Centered>
         <Button onClick={getHistory}>Refresh</Button>
+        <Button
+          onClick={() => {
+            //@ts-ignore
+            // await window.electron.setChain(1);
+            setSelectedChainId(1);
+          }}
+        >
+          setChainTo1
+        </Button>
+        <Button
+          onClick={() => {
+            setSelectedChainId(0);
+          }}
+        >
+          setChainTo0
+        </Button>
         <Button onClick={handleExit}>Exit App</Button>
       </Centered>
     </div>
