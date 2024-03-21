@@ -3,9 +3,9 @@ import { store } from "./store";
 import { HistoricalDataPoint } from "./types";
 import { chains } from "./chains";
 
-export let nodeUrl = store.get("rpcUrl");
-
 async function getBlock(blockNumberHex: string) {
+  const nodeUrl = store.get("rpcUrl");
+
   return await axios.post(
     nodeUrl,
     {
@@ -23,6 +23,8 @@ async function getBlock(blockNumberHex: string) {
 }
 
 export async function getBaseFee(blockNumber?: number) {
+  const nodeUrl = store.get("rpcUrl");
+
   try {
     const response = await getBlock(
       blockNumber ? "0x" + blockNumber.toString(16) : "latest"
@@ -43,6 +45,8 @@ export async function getBaseFee(blockNumber?: number) {
 }
 
 export async function getHistoricalGasPrices(): Promise<HistoricalDataPoint[]> {
+  const nodeUrl = store.get("rpcUrl");
+
   const blocksPerPeriod = 1200; // Approximate number of blocks to skip for 20 data points over 48 hours
 
   let historicalData: HistoricalDataPoint[] = [];

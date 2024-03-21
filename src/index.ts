@@ -1,9 +1,8 @@
 import { menubar } from "menubar";
 import path from "path";
 import { app, ipcMain } from "electron";
-import Store from "electron-store";
 import { Chain } from "./types";
-import { getBaseFee, getHistoricalGasPrices, nodeUrl } from "./utils";
+import { getBaseFee, getHistoricalGasPrices } from "./utils";
 import { store } from "./store";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
