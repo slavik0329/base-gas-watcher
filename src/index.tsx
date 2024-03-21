@@ -42,9 +42,9 @@ const App = () => {
 
     setLoading(true);
     //@ts-ignore
-    // const history = await window.electron.getHistory();
+    const history = await window.electron.getHistory();
 
-    const history = mockHistoricalData;
+    // const history = mockHistoricalData;
     setData(history);
 
     setLoading(false);
@@ -54,6 +54,19 @@ const App = () => {
     getHistory();
   }, []);
 
+  const bottomMenu = (
+    <BottomMenu>
+      <IconButton onClick={getHistory} title={"Refresh"}>
+        <IoMdRefresh />
+      </IconButton>
+      <IconButton title={"Settings"} onClick={() => setSettingsOpen(true)}>
+        <IoMdSettings />
+      </IconButton>
+      <IconButton onClick={handleExit} title={"Quit Widget"}>
+        <IoMdExit />
+      </IconButton>
+    </BottomMenu>
+  );
   return (
     <div>
       {settingsOpen ? (
@@ -64,24 +77,12 @@ const App = () => {
           <ChartContainer>
             <BaseGasChart data={data} />
           </ChartContainer>
-          <BottomMenu>
-            <IconButton onClick={getHistory} title={"Refresh"}>
-              <IoMdRefresh />
-            </IconButton>
-            <IconButton
-              title={"Settings"}
-              onClick={() => setSettingsOpen(true)}
-            >
-              <IoMdSettings />
-            </IconButton>
-            <IconButton onClick={handleExit} title={"Quit Widget"}>
-              <IoMdExit />
-            </IconButton>
-          </BottomMenu>
+          {bottomMenu}
         </>
       ) : (
         <Centered>
           <Loading>Loading History...</Loading>
+          {bottomMenu}
         </Centered>
       )}
     </div>

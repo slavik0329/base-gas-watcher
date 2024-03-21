@@ -1,7 +1,7 @@
 import React from "react";
-import { BottomMenu, Centered, PageTitle } from "./styles";
+import { BottomMenu, PageTitle } from "./styles";
 import IconButton from "./components/IconButton";
-import { IoMdExit } from "react-icons/io";
+import { IoMdCloseCircle } from "react-icons/io";
 import styled from "styled-components";
 import { chains } from "./chains";
 import { useStore } from "./useStore";
@@ -78,7 +78,7 @@ export function SettingsPage({ handleCloseSettings }: Props) {
 
       <BottomMenu>
         <IconButton title={"Close Settings"} onClick={handleCloseSettings}>
-          <IoMdExit />
+          <IoMdCloseCircle />
         </IconButton>
       </BottomMenu>
     </div>
