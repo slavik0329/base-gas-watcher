@@ -70,7 +70,13 @@ const App = () => {
   return (
     <div>
       {settingsOpen ? (
-        <SettingsPage handleCloseSettings={() => setSettingsOpen(false)} />
+        <SettingsPage
+          handleCloseSettings={() => setSettingsOpen(false)}
+          handleChainChange={() => {
+            setData([]);
+            getHistory();
+          }}
+        />
       ) : !loading ? (
         <>
           <PageTitle>Base Fee History</PageTitle>

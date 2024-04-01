@@ -6,10 +6,6 @@ import styled from "styled-components";
 import { chains } from "./chains";
 import { useStore } from "./useStore";
 
-type Props = {
-  handleCloseSettings: () => void;
-};
-
 const Body = styled.div`
   padding: 12px;
 `;
@@ -47,7 +43,15 @@ const Chain = styled.div`
   }
 `;
 
-export function SettingsPage({ handleCloseSettings }: Props) {
+type Props = {
+  handleCloseSettings: () => void;
+  handleChainChange: (id: number) => void;
+};
+
+export function SettingsPage({
+  handleCloseSettings,
+  handleChainChange
+}: Props) {
   const selectedChainId = useStore(state => state.selectedChainId);
   const setSelectedChainId = useStore(state => state.setSelectedChainId);
 
@@ -57,6 +61,7 @@ export function SettingsPage({ handleCloseSettings }: Props) {
     //@ts-ignore
     window.electron.setChain(chain);
     setSelectedChainId(id);
+    handleChainChange(id);
   }
 
   return (
