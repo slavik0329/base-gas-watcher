@@ -1,6 +1,6 @@
 import { HistoricalDataPoint } from "./types";
 
-export const mockHistoricalData: HistoricalDataPoint[] = [
+export const mockHistoricalData: Omit<HistoricalDataPoint, "chainName">[] = [
   {
     blockNumber: 12086882,
     baseFeePerGasMwei: 1166,
