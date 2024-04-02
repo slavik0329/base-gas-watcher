@@ -74,7 +74,7 @@ export function SettingsPage({
         <Chains>
           {chains.map((chain, i) => (
             <Chain key={chain.name} onClick={() => setChainId(i)}>
-              <img src={`/assets/${chain.icon}`} />
+              <img src={chain.icon} />
               {chain.name}
             </Chain>
           ))}

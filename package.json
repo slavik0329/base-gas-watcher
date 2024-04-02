@@ -1,6 +1,6 @@
 {
   "name": "base-gas-watcher",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Example menubar electron app",
   "main": "./.webpack/main",
   "private": true,
